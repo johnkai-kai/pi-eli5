@@ -1,7 +1,7 @@
 ---
 name: eli5
 description: 用大圖少字的 HTML 把一個主題解釋給完全不懂的人聽。當使用者輸入 /eli5 <主題>、/skill:eli5 <主題>,或要求「用最白話的方式解釋」「畫圖說明這是怎麼運作的」「當我是小孩子講一次」時使用。產出的 HTML 會存進使用者的解說資料夾並自動用瀏覽器開啟。
-license: MIT。移植自 Thariq Shihipar 的 eli5 外掛,見 repo 的 LICENSE-eli5。
+license: MIT (see LICENSE-eli5)
 ---
 
 # eli5
