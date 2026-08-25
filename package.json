@@ -1,0 +1,56 @@
+{
+  "name": "pi-eli5",
+  "version": "0.1.0",
+  "description": "Explain any topic like I'm 5, as a self-contained HTML explainer, for the pi coding agent.",
+  "type": "module",
+  "license": "MIT",
+  "author": "johnkai-kai",
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "eli5",
+    "explainer",
+    "learning",
+    "html"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johnkai-kai/pi-eli5.git"
+  },
+  "bugs": {
+    "url": "https://github.com/johnkai-kai/pi-eli5/issues"
+  },
+  "homepage": "https://github.com/johnkai-kai/pi-eli5#readme",
+  "engines": {
+    "node": ">=22.6.0"
+  },
+  "files": [
+    "src",
+    "skills",
+    "LICENSE",
+    "LICENSE-eli5",
+    "README.md"
+  ],
+  "pi": {
+    "extensions": [
+      "./src/index.ts"
+    ],
+    "skills": [
+      "./skills"
+    ]
+  },
+  "scripts": {
+    "test": "node --test \"tests/*.test.ts\""
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": ">=0.84 <1",
+    "typebox": ">=0.34"
+  },
+  "peerDependenciesMeta": {
+    "@earendil-works/pi-coding-agent": { "optional": true },
+    "typebox": { "optional": true }
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  }
+}

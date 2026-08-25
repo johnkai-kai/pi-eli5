@@ -101,7 +101,7 @@ pi-eli5/
 
 CI（`.github/workflows/ci.yml`，Node 22）：`npm test` → `node scripts/scan-secrets.mjs` → `npx tsc --noEmit`。
 
-`scripts/scan-secrets.mjs` 照抄 pi-statusline-hud，`SKIP_FILES` 改為 `LICENSE`、`LICENSE-eli5`、`scan-secrets.mjs`。repo 為 public，全部文件與範例不得出現個人 email、`C:\Users\<name>\`、家目錄路徑。
+`scripts/scan-secrets.mjs` 照抄 pi-statusline-hud，`SKIP_FILES` 改為 `LICENSE`、`LICENSE-eli5`、`scan-secrets.mjs`。repo 為 public，全部文件與範例不得出現個人 email、Windows 使用者家目錄、家目錄路徑。
 
 ## 不做（YAGNI）
 
