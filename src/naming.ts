@@ -1,8 +1,8 @@
 const FALLBACK_SLUG = "explainer";
 const MAX_SLUG_LENGTH = 60;
 
-// 只留 a-z0-9-。這同時是安全邊界:主題字串來自模型,若原樣拼進路徑,
-// "../../.bashrc" 這種東西就會寫到輸出目錄外面去。
+// a-z0-9- only. This is also the security boundary: the topic comes from the
+// model, and "../../.bashrc" would otherwise escape the output directory.
 export function slugify(topic: string): string {
   const slug = topic
     .toLowerCase()
@@ -18,7 +18,8 @@ export function dateStamp(date: Date): string {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
-// 同一天講同一個主題兩次不該互相覆蓋——舊那份可能還開著。
+// Explaining the same topic twice in one day must not overwrite the first
+// explainer — it may still be open in a browser tab.
 export function fileName(topic: string, date: Date, existing: readonly string[]): string {
   const base = `${dateStamp(date)}-${slugify(topic)}`;
   const taken = new Set(existing);

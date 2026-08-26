@@ -31,7 +31,7 @@ export const nodeDeps: PublishDeps = {
   },
   write: (path, data) => writeFile(path, data, "utf-8"),
   open: async () => {
-    throw new Error("open 必須由 extension 注入 pi.exec");
+    throw new Error("open must be injected by the extension via pi.exec");
   },
   now: () => new Date(),
   platform: process.platform,
@@ -50,7 +50,8 @@ export async function publish(
 
   if (!config.autoOpen) return { path, opened: false };
 
-  // 開不起來不算失敗:檔案已經在磁碟上了,回報沒開,讓模型改成單純告知路徑。
+  // Failing to open is not a failure: the file is already on disk. Report it as
+  // unopened so the model simply tells the user the path.
   const { command, args } = openCommand(deps.platform, path);
   try {
     await deps.open(command, args);

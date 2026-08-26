@@ -13,8 +13,8 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: '22'
-      # 準備環境的步驟一律排在所有消費它的步驟之前。把安裝藏在 Type check 裡,
-      # 其他步驟就看不到這些相依——pi-statusline-hud 曾為此紅了好幾個 commit 沒人發現。
+      # Environment setup runs before everything that consumes it. Hiding the
+      # install inside Type check leaves every other step without these deps.
       - name: Install dev dependencies
         run: npm install --no-save typescript @types/node @earendil-works/pi-coding-agent typebox
       - name: Unit tests

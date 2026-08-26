@@ -12,12 +12,14 @@ export default function eli5(pi: ExtensionAPI): void {
     name: "eli5_publish",
     label: "eli5",
     description:
-      "把一份完整自包含的 HTML 解說存成檔案並用系統預設瀏覽器開啟。回傳檔案的絕對路徑。" +
-      "使用 eli5 skill 產生解說後,一律用這個工具交付,不要自己寫檔或自己下開檔指令。",
+      "Save a fully self-contained HTML explainer to a file and open it in the " +
+      "default browser. Returns the absolute path. After producing an explainer " +
+      "with the eli5 skill, always deliver it through this tool — never write the " +
+      "file yourself and never run your own open command.",
     parameters: Type.Object({
-      topic: Type.String({ description: "解說主題,用來決定檔名" }),
+      topic: Type.String({ description: "The topic explained; used to derive the filename" }),
       html: Type.String({
-        description: "完整的 HTML 文件,必須自包含:inline CSS、零外部資源、零 CDN",
+        description: "Complete HTML document. Must be self-contained: inline CSS, no external assets, no CDN",
       }),
     }),
     async execute(_toolCallId, params, signal) {
@@ -27,12 +29,12 @@ export default function eli5(pi: ExtensionAPI): void {
         ...nodeDeps,
         open: async (command, args) => {
           const run = await pi.exec(command, args, { timeout: OPEN_TIMEOUT_MS, signal });
-          if (run.code !== 0) throw new Error(`開檔指令回傳 ${run.code}`);
+          if (run.code !== 0) throw new Error(`open command exited with ${run.code}`);
         },
       });
       const note = result.opened
-        ? "已用預設瀏覽器開啟。"
-        : "沒有自動開啟(autoOpen 關閉或開檔指令失敗),請告訴使用者路徑讓他自己開。";
+        ? "Opened in the default browser."
+        : "Not opened (autoOpen is off, or the open command failed) — tell the user the path so they can open it.";
       return {
         content: [{ type: "text", text: `${result.path}\n${note}` }],
         details: result,
@@ -41,14 +43,14 @@ export default function eli5(pi: ExtensionAPI): void {
   });
 
   pi.registerCommand("eli5", {
-    description: "用大圖少字的 HTML 解說一個主題",
+    description: "Explain a topic with a big-picture, few-words HTML page",
     handler: async (args, ctx) => {
       const topic = args.trim();
       if (!topic) {
-        ctx.ui.notify("用法:/eli5 <主題>", "warning");
+        ctx.ui.notify("Usage: /eli5 <topic>", "warning");
         return;
       }
-      const message = `使用 eli5 skill 解說這個主題:${topic}`;
+      const message = `Use the eli5 skill to explain this topic: ${topic}`;
       try {
         pi.sendUserMessage(message);
       } catch {

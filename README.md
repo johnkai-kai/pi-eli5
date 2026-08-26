@@ -1,6 +1,6 @@
 # pi-eli5
 
-用大圖少字的 HTML 把一個主題解釋給完全不懂的人聽。[pi](https://github.com/earendil-works/pi) coding agent 外掛。
+Explain any topic to someone who knows nothing about it, as an HTML page of big pictures and few words. A plugin for the [pi](https://github.com/earendil-works/pi) coding agent.
 
 
 ## Demo
@@ -9,10 +9,10 @@
 > /eli5 how does DNS work
 
   eli5  ~/.pi/eli5/2026-08-26-how-does-dns-work.html
-        已用預設瀏覽器開啟。
+        Opened in the default browser.
 ```
 
-解說是一份自包含的 HTML，存進 `~/.pi/eli5/`，寫完自動跳出瀏覽器，agent 順便告訴你檔案在哪。
+The explainer is a self-contained HTML file, saved to `~/.pi/eli5/`, opened in your browser as soon as it is written. The agent tells you the path.
 
 
 ## Quickstart
@@ -29,26 +29,26 @@ uninstall
 pi uninstall git:github.com/johnkai-kai/pi-eli5
 ```
 
-設定檔 `~/.pi/agent/pi-eli5.json` 與 `~/.pi/eli5/` 裡的解說不會跟著被刪，重裝時原本的設定與累積的解說都還在。真的不要了就自己刪。
+Uninstalling leaves `~/.pi/agent/pi-eli5.json` and everything in `~/.pi/eli5/` in place — your settings and your explainers survive a reinstall. Delete them yourself if you want them gone.
 
 
-## 兩個入口
+## Two entry points
 
-| 方式 | 說明 |
+| Form | Notes |
 |---|---|
-| `/eli5 <主題>` | extension 註冊的短指令，直接開講 |
-| `/skill:eli5 <主題>` | pi 內建的 skill 指令，效果相同 |
-| 自然語言 | 「用最白話的方式解釋 X」「當我是小孩子講一次」，模型自己會叫用 skill |
+| `/eli5 <topic>` | Short command registered by the extension |
+| `/skill:eli5 <topic>` | pi's built-in skill command; same result |
+| Plain English | "explain X in the simplest possible terms" — the model invokes the skill on its own |
 
 
 ## Config
 
-設定檔為 `~/.pi/agent/pi-eli5.json`，沒有這個檔就是全用預設。改完立即生效，不用重啟。
+`~/.pi/agent/pi-eli5.json`. No file means all defaults. Changes take effect immediately; no restart.
 
-| 鍵 | 預設 | 說明 |
+| Key | Default | Meaning |
 |---|---|---|
-| `outputDir` | `~/.pi/eli5` | 解說 HTML 存哪，可用 `~` |
-| `autoOpen` | `"on"` | 寫完要不要自動用系統預設瀏覽器開啟，`"on"` / `"off"` |
+| `outputDir` | `~/.pi/eli5` | Where explainers are saved; `~` is expanded |
+| `autoOpen` | `"on"` | Open in the default browser after writing, `"on"` / `"off"` |
 
 ```json
 {
@@ -57,28 +57,28 @@ pi uninstall git:github.com/johnkai-kai/pi-eli5
 }
 ```
 
-設定檔壞掉或不存在一律靜默回退預設——設定檔的問題不該讓你連解說都產不出來。
+A missing or malformed config falls back to the defaults silently — a bad config file should not stop you getting an explainer.
 
 
-## 它做了什麼
+## What it actually does
 
-Claude Code 版的 eli5 靠 Artifact 工具把 HTML 發佈成網頁。**pi 沒有那個執行期**，所以這個移植補上了被 Artifact 隱藏掉的那一段：
+The Claude Code version of eli5 relies on the Artifact tool to publish HTML as a viewable page. **pi has no such runtime**, so this port supplies the part Artifact used to hide:
 
-| 單元 | 職責 |
+| Unit | Responsibility |
 |---|---|
-| `skills/eli5/SKILL.md` | 教模型怎麼講、怎麼畫，以及 HTML 必須完全自包含（inline CSS、零 CDN、零外部資源） |
-| `eli5_publish` 工具 | 決定檔名、寫檔、跨平台開啟、回報路徑 |
-| `/eli5` 指令 | 短指令入口 |
+| `skills/eli5/SKILL.md` | How to explain, how to draw, and the rule that the HTML must be fully self-contained (inline CSS, no CDN, no external assets) |
+| `eli5_publish` tool | Picks the filename, writes the file, opens it cross-platform, reports the path |
+| `/eli5` command | The short entry point |
 
-跨平台開檔一律以 argv 陣列呼叫，不拼字串：Windows `cmd /c start "" <path>`、macOS `open <path>`、其他 `xdg-open <path>`。檔名為 `YYYY-MM-DD-<slug>.html`，slug 只保留 `a-z0-9-`（同時是擋路徑穿越的安全邊界），同日同題不覆蓋而是加序號。
+Opening is always an argv array, never a concatenated string: Windows `cmd /c start "" <path>`, macOS `open <path>`, otherwise `xdg-open <path>`. Filenames are `YYYY-MM-DD-<slug>.html`, where the slug keeps only `a-z0-9-` — that is also the boundary that stops a topic from escaping the output directory. Same topic twice in one day gets a numeric suffix rather than overwriting.
 
 
 ## Thanks
 
-移植自 [eli5](https://github.com/anthropics/claude-plugins-community/tree/main/eli5)
-(MIT, © 2026 Thariq Shihipar)，一個 Claude Code 外掛。原始授權與來源聲明完整保留在 `LICENSE-eli5`。
+Ported from [eli5](https://github.com/anthropics/claude-plugins-community/tree/main/eli5)
+(MIT, © 2026 Thariq Shihipar), a Claude Code plugin. Its license and provenance are preserved in full in `LICENSE-eli5`.
 
 
 ## License
 
-MIT — `LICENSE`。
+MIT — `LICENSE`.

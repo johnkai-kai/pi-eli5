@@ -39,7 +39,7 @@ function fakeDeps(overrides: Partial<PublishDeps> = {}): PublishDeps & {
 
 const config: Eli5Config = { outputDir: join("/", "out"), autoOpen: true };
 
-test("寫檔到 outputDir,檔名由主題與日期決定", async () => {
+test("writes into outputDir with a name derived from topic and date", async () => {
   const deps = fakeDeps();
   const result = await publish("How does DNS work", "<html></html>", config, deps);
   assert.equal(result.path, join("/", "out", "2026-08-26-how-does-dns-work.html"));
@@ -47,14 +47,14 @@ test("寫檔到 outputDir,檔名由主題與日期決定", async () => {
   assert.deepEqual(deps.dirs, [join("/", "out")]);
 });
 
-test("autoOpen 開啟時呼叫平台對應的開檔指令", async () => {
+test("with autoOpen on it runs the platform open command", async () => {
   const deps = fakeDeps({ platform: "win32" });
   const result = await publish("dns", "<html></html>", config, deps);
   assert.equal(result.opened, true);
   assert.deepEqual(deps.opens, [{ command: "cmd", args: ["/c", "start", "", result.path] }]);
 });
 
-test("autoOpen 關閉時完全不碰開檔指令", async () => {
+test("with autoOpen off it never touches the open command", async () => {
   const deps = fakeDeps();
   const result = await publish("dns", "<html></html>", { ...config, autoOpen: false }, deps);
   assert.equal(result.opened, false);
@@ -62,10 +62,10 @@ test("autoOpen 關閉時完全不碰開檔指令", async () => {
   assert.equal(deps.written.size, 1);
 });
 
-test("開檔失敗仍回傳成功寫入的路徑,只是 opened 為 false", async () => {
+test("a failed open still returns the written path, just unopened", async () => {
   const deps = fakeDeps({
     open: async () => {
-      throw new Error("xdg-open 不存在");
+      throw new Error("xdg-open not found");
     },
   });
   const result = await publish("dns", "<html></html>", config, deps);
@@ -73,13 +73,13 @@ test("開檔失敗仍回傳成功寫入的路徑,只是 opened 為 false", async
   assert.ok(deps.written.has(result.path));
 });
 
-test("既有檔名不會被覆蓋", async () => {
+test("an existing file is never overwritten", async () => {
   const deps = fakeDeps({ listDir: async () => ["2026-08-26-dns.html"] });
   const result = await publish("dns", "<html></html>", config, deps);
   assert.equal(result.path, join("/", "out", "2026-08-26-dns-2.html"));
 });
 
-test("寫檔錯誤往外拋,不被吞掉", async () => {
+test("a write error propagates instead of being swallowed", async () => {
   const deps = fakeDeps({
     write: async () => {
       throw new Error("EACCES");
@@ -88,7 +88,7 @@ test("寫檔錯誤往外拋,不被吞掉", async () => {
   await assert.rejects(() => publish("dns", "<html></html>", config, deps), /EACCES/);
 });
 
-test("nodeDeps 真的會建目錄並寫出檔案", async () => {
+test("nodeDeps really creates the directory and writes the file", async () => {
   const root = mkdtempSync(join(tmpdir(), "eli5-pub-"));
   const target = join(root, "nested", "eli5");
   const result = await publish(
@@ -101,6 +101,6 @@ test("nodeDeps 真的會建目錄並寫出檔案", async () => {
   assert.deepEqual(await readdir(target), ["2026-08-26-real-write.html"]);
 });
 
-test("nodeDeps.listDir 對不存在的資料夾回空陣列而非拋錯", async () => {
+test("nodeDeps.listDir returns an empty array for a missing directory", async () => {
   assert.deepEqual(await nodeDeps.listDir(join(tmpdir(), "eli5-does-not-exist-xyz")), []);
 });

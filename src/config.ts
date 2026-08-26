@@ -38,7 +38,8 @@ export function parseConfig(raw: unknown, home: string = homedir()): Eli5Config 
   };
 }
 
-// 設定檔壞掉不該讓解說產不出來,所以任何讀取失敗都靜默回退全預設。
+// A broken config file must not stop an explainer from being produced, so any
+// read failure falls back to the full defaults.
 export function loadConfig(agentDir: string, home: string = homedir()): Eli5Config {
   try {
     return parseConfig(JSON.parse(readFileSync(join(agentDir, CONFIG_FILE), "utf-8")), home);

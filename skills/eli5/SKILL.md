@@ -1,46 +1,46 @@
 ---
 name: eli5
-description: 用大圖少字的 HTML 把一個主題解釋給完全不懂的人聽。當使用者輸入 /eli5 <主題>、/skill:eli5 <主題>,或要求「用最白話的方式解釋」「畫圖說明這是怎麼運作的」「當我是小孩子講一次」時使用。產出的 HTML 會存進使用者的解說資料夾並自動用瀏覽器開啟。
+description: Explain a topic to someone who knows nothing about it, using an HTML page of big pictures and very few words. Use when the user types /eli5 <topic> or /skill:eli5 <topic>, or asks to have something explained in the simplest possible terms, drawn out, or "explained like I'm five". The HTML is saved to the user's explainer folder and opened in their browser.
 license: MIT (see LICENSE-eli5)
 ---
 
 # eli5
 
-把主題解釋給**完全不懂這件事的人**聽,手段是一份大圖少字的 HTML。
+Explain the topic to **someone who knows nothing about it**, as an HTML page of big pictures and few words.
 
-## 怎麼講
+## How to explain
 
-- **圖優先,字其次**。畫面主體是視覺:方塊、箭頭、流程、對比。文字是圖的標籤,不是圖的替代品。
-- **一頁一個念頭**。每個區塊只讓讀者學會一件事,學會了才進下一件。
-- **少字**。一個區塊的說明超過兩句話,就是你還沒想清楚要怎麼畫。
-- **不要行話**。非講不可的術語,先用日常事物打比方,再說出它的名字。
-- **從第一原理開始**。先講「為什麼會需要這個東西」,再講「它怎麼做到」。跳過動機的解說,讀者記不住。
+- **Pictures first, words second.** The page is carried by visuals: boxes, arrows, flows, contrasts. Text labels the picture; it does not replace it.
+- **One idea per section.** Each section teaches exactly one thing before the next begins.
+- **Few words.** If a section needs more than two sentences, you have not worked out how to draw it yet.
+- **No jargon.** When a term is unavoidable, compare it to an everyday object first, then name it.
+- **Start from first principles.** Explain *why this thing needs to exist* before *how it works*. An explanation that skips the motivation does not stick.
 
-## HTML 的硬規定
+## HTML rules
 
-產出的是**本機檔案,用瀏覽器直接打開**,沒有伺服器、沒有網路保證:
+The output is a **local file opened in a browser** — no server, no guaranteed network:
 
-- **完全自包含**:CSS 全部 inline 在 `<style>` 裡,零外部樣式表、零 CDN、零外部字型、零外部圖片。
-- **圖用 inline SVG 或純 CSS 畫**。不要 `<img src="http...">`,那在離線時就是一個破圖。
-- **深色底、暖色調**,大字級、寬行距。讀者可能盯著它看很久。
-- 給 `<html>` 加 `lang`,給頁面一個 `<title>`——它會變成瀏覽器分頁的名字。
-- 版面用 `max-width` 收在可讀寬度內,並確保窄視窗不會橫向捲動。
+- **Fully self-contained.** All CSS inline in a `<style>` block. No external stylesheets, no CDN, no web fonts, no remote images.
+- **Draw with inline SVG or plain CSS.** Never `<img src="http...">` — offline that is a broken image.
+- **Dark background, warm palette**, large type, generous line height. The reader may stare at this for a while.
+- Set `lang` on `<html>` and give the page a `<title>` — it becomes the browser tab name.
+- Constrain the layout with `max-width` and make sure a narrow window never scrolls horizontally.
 
-## 交付
+## Delivery
 
-寫完之後**呼叫 `eli5_publish` 工具**,參數 `{ topic, html }`。
+When the HTML is ready, **call the `eli5_publish` tool** with `{ topic, html }`.
 
-- **不要自己 `write` 檔案**,也不要自己下 `start` / `open` / `xdg-open`。工具已經處理好檔名、輸出資料夾與跨平台開檔。
-- 工具回傳絕對路徑。**把那個路徑講給使用者聽**,並說明是否已經自動開啟。
-- 若工具回報沒有自動開啟,不要重試開檔——直接告訴使用者檔案在哪,請他自己打開。
+- **Never write the file yourself.** Do not use the `write` tool for the explainer, and do not run `start`, `open`, or `xdg-open`. The tool already handles the filename, the output directory, and cross-platform opening. Writing it yourself puts the file in the wrong place with the wrong name and nothing opens.
+- The tool returns an absolute path. **Tell the user that path** and whether it was opened automatically.
+- If the tool reports it was not opened, do not retry — just tell the user where the file is.
 
-## 使用者可以調什麼
+## What the user can configure
 
-設定檔 `<agentDir>/pi-eli5.json`(`agentDir` 通常是 `~/.pi/agent`),兩個鍵:
+`<agentDir>/pi-eli5.json` (`agentDir` is usually `~/.pi/agent`), two keys:
 
-| 鍵 | 預設 | 說明 |
+| Key | Default | Meaning |
 |---|---|---|
-| `outputDir` | `~/.pi/eli5` | 解說 HTML 存放的資料夾,可用 `~` |
-| `autoOpen` | `"on"` | 寫完要不要自動用系統預設瀏覽器開啟,`"on"` / `"off"` |
+| `outputDir` | `~/.pi/eli5` | Where explainers are saved; `~` is expanded |
+| `autoOpen` | `"on"` | Whether to open the file in the default browser, `"on"` / `"off"` |
 
-使用者說「別再自動跳出來了」或「我想把解說放到別的地方」,就是改這個檔。改完立即生效,不用重啟。
+"Stop popping up a window" or "put these somewhere else" means editing this file. Changes take effect immediately; no restart.
